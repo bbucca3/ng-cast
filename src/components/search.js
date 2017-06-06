@@ -1,5 +1,7 @@
 angular.module('video-player')
 
 .component('search', {
-  // TODO
+  transclude: true,
+  templateUrl: '../src/templates/search.html'
+  
 });

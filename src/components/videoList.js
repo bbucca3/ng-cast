@@ -1,4 +1,16 @@
 angular.module('video-player')
+.controller('VideoCtrl', function($scope) {
+  $scope.myVideosList = exampleVideoData;
+  console.log($scope);
+
+})
 .component('videoList', {
-  // TODO
+  transclude: true,
+  templateUrl: '../src/templates/videoList.html',
+  bindings: {
+    videoListProp: '<'
+  },
+  controller: function($scope) {
+    
+  }
 });

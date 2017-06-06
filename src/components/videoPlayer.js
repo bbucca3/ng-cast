@@ -1,5 +1,6 @@
 angular.module('video-player')
 
 .component('videoPlayer', {
-  // TODO
+  transclude: true,
+  templateUrl: '../src/templates/videoPlayer.html'
 });
