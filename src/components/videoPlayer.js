@@ -1,6 +1,14 @@
 angular.module('video-player')
 
 .component('videoPlayer', {
-  transclude: true,
-  templateUrl: '../src/templates/videoPlayer.html'
+  bindings: {
+    currentvideo: '<',
+    clickListEntry: '<',
+  },
+  templateUrl: '../src/templates/videoPlayer.html',
+  controller: function() {
+    this.generateUrl = () => {
+      return 'https://www.youtube.com/embed/' + this.currentvideo.id.videoId;
+    };
+  }
 });
