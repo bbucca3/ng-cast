@@ -1,0 +1,384 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>One-way data-binding in Angular 1.5</title>
+<meta name="description" content="Angular is known for its powerful two-way data-binding, but with the new release of AngularJS 1.5, we’ve got one-way data binding (one-directional) binding c...">
+<meta name="author" content="Todd Motto">
+<link rel="stylesheet" href="/css/main.css?1496160711121721403">
+<link rel="canonical" href="https://toddmotto.com/one-way-data-binding-in-angular-1-5/">
+<link rel="alternate" type="application/rss+xml" title="Todd Motto" href="https://toddmotto.com/feed.xml">
+<meta property="og:locale" content="en_US">
+<meta property="og:type" content="article">
+<meta property="og:title" content="One-way data-binding in Angular 1.5">
+<meta property="og:description" content="Angular is known for its powerful two-way data-binding, but with the new release of AngularJS 1.5, we’ve got one-way data binding (one-directional) binding c...">
+<meta property="og:url" content="https://toddmotto.com/one-way-data-binding-in-angular-1-5/">
+<meta property="og:site_name" content="Todd Motto">
+<meta property="og:image" content="https://toddmotto.com/img/todd.jpg">
+<meta property="og:publisher" content="https://www.facebook.com/toddmotto">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@toddmotto">
+<meta name="twitter:title" content="One-way data-binding in Angular 1.5">
+<meta name="twitter:description" content="Angular is known for its powerful two-way data-binding, but with the new release of AngularJS 1.5, we’ve got one-way data binding (one-directional) binding c...">
+<meta name="twitter:image" content="https://toddmotto.com/img/todd.jpg">
+</head>
+<body>
+<header class="header">
+<div class="wrapper">
+<div class="header__img">
+<a href="/">
+<img src="/img/todd.jpg" alt="Todd Motto">
+</a>
+</div>
+<div class="header__bio">
+<p>
+I'm Todd, I teach the world Angular through <a href="https://ultimateangular.com">@UltimateAngular</a>.
+Conference speaker and <a href="//developers.google.com/experts/people/todd-motto">Developer Expert</a> at Google.
+</p>
+<a href="https://twitter.com/toddmotto" class="twitter-follow-button" data-show-count="true"></a>
+<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+</div>
+</div>
+</header>
+<nav class="nav">
+<ul>
+<li>
+<a href="/">Posts</a>
+</li>
+<li>
+<a href="/about">
+About
+</a>
+</li>
+<li>
+<a href="/speaking">
+Speaking
+</a>
+</li>
+<li>
+<a href="//ultimateangular.com">
+<img src="/img/icons/angular.svg" alt="" style="width: 20px;">
+Training
+</a>
+</li>
+</ul>
+</nav>
+<main class="content">
+<div class="action-bar">
+<form class="search">
+<input type="text" placeholder="Search posts">
+<ul></ul>
+</form>
+</div>
+<div class="card">
+<div class="courses courses--top">
+<a class="courses__out" href="https://ultimateangular.com/?utm_source=toddmotto.com" target="_blank">
+<img class="courses__logo" src="/img/ua.svg" alt="">
+<h3>
+Award-winning Angular 1.x and Angular 2 courses
+</h3>
+<p>
+Become an expert with my comprehensive Angular 1.5+ and Angular 2 courses
+</p>
+<button type="button">
+View courses
+</button>
+</a>
+</div>
+<div class="card__content">
+<article class="post single">
+<header class="post__header">
+<h1 class="alpha post__title" itemprop="name headline">
+One-way data-binding in Angular 1.5
+</h1>
+<span class="post__meta">
+<time class="post__date" datetime="2016-02-05T00:00:00+00:00" itemprop="datePublished">
+Feb 5, 2016
+</time>
+-
+<a class="post__edit" href="//github.com/toddmotto/toddmotto.github.io/blob/master/_posts/2016-02-05-one-way-data-binding-in-angular-1-5.md">
+Edit this page on GitHub
+</a>
+</span>
+<div class="post__meta__divider"></div>
+</header>
+<section class="post__content">
+<script async type="text/javascript" src="//cdn.carbonads.com/carbon.js?zoneid=1696&serve=CVYD42T&placement=toddmottocom" id="_carbonads_js"></script>
+<p>Angular is known for its powerful two-way data-binding, but with the new release of AngularJS 1.5, we’ve got one-way data binding (one-directional) binding capabilities inside our Components and Directives. Woohoo! Let’s explore to see what it does, and doesn’t, give us to develop with.</p>
+<h3 id="first-impressions">First impressions</h3>
+<p>When I setup an example jsFiddle to test this new feature out, I used an Object with a <code class="highlighter-rouge">name</code> property, then manipulated it through isolate bindings, only to find that Angular updated the Object and it was in fact still two-way data-binding (well, somewhat). Objects in JavaScript are bound by reference, and Angular doesn’t make a copy of the Object when passing into one-way bindings, it actually sets the same value, which means Objects are somewhat two-way bound still.</p>
+<h3 id="directivecomponent-api">Directive/Component API</h3>
+<p>For this article, I’ll be using the new <a href="/exploring-the-angular-1-5-component-method">Component method</a>. The syntax is the same for both Directives and Components, so you’ll pick it up easy.</p>
+<h3 id="two-way-binding">Two-way binding</h3>
+<p>Before we even look at what one-way binding does, it makes sense to provide a two-way binding example for us to compare against.</p>
+<p>Let’s create a component definition with respective <code class="highlighter-rouge">parent</code> Controller and some bindings and functions to let us manipulate some data:</p>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">example</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">bindings</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">obj</span><span class="p">:</span> <span class="s1">'='</span><span class="p">,</span>
+    <span class="na">prim</span><span class="p">:</span> <span class="s1">'='</span>
+  <span class="p">},</span>
+  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
+    <span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">"section"</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">h4</span><span class="o">&gt;</span>
+        <span class="nx">Isolate</span> <span class="nx">Component</span>
+      <span class="o">&lt;</span><span class="sr">/h4</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="na">Object</span><span class="p">:</span> <span class="p">{{</span> <span class="nx">$ctrl</span><span class="p">.</span><span class="nx">obj</span> <span class="p">}}</span><span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="na">Primitive</span><span class="p">:</span> <span class="p">{{</span> <span class="nx">$ctrl</span><span class="p">.</span><span class="nx">prim</span> <span class="p">}}</span><span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s2">""</span> <span class="nx">ng</span><span class="o">-</span><span class="nx">click</span><span class="o">=</span><span class="s2">"$ctrl.updateValues();"</span><span class="o">&gt;</span>
+        <span class="nx">Change</span> <span class="nx">Isolate</span> <span class="nx">Values</span>
+      <span class="o">&lt;</span><span class="sr">/a</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>  <span class="err">`</span><span class="p">,</span>
+  <span class="na">controller</span><span class="p">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">updateValues</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">prim</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="na">john</span><span class="p">:</span> <span class="p">{</span>
+          <span class="na">age</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span>
+          <span class="na">location</span><span class="p">:</span> <span class="s1">'Unknown'</span>
+        <span class="p">}</span>
+      <span class="p">};</span>
+    <span class="p">};</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">function</span> <span class="nx">ParentController</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">somePrimitive</span> <span class="o">=</span> <span class="mi">99</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">someObject</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">todd</span><span class="p">:</span> <span class="p">{</span>
+      <span class="na">age</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
+      <span class="na">location</span><span class="p">:</span> <span class="s1">'England, UK'</span>
+    <span class="p">}</span>
+  <span class="p">};</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">updateValues</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">somePrimitive</span> <span class="o">=</span> <span class="mi">33</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">someObject</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="na">jilles</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">age</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+        <span class="na">location</span><span class="p">:</span> <span class="s1">'Netherlands'</span>
+      <span class="p">}</span>
+    <span class="p">};</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="nx">angular</span>
+  <span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'app'</span><span class="p">,</span> <span class="p">[])</span>
+  <span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'example'</span><span class="p">,</span> <span class="nx">example</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'ParentController'</span><span class="p">,</span> <span class="nx">ParentController</span><span class="p">);</span></code></pre></figure>
+<p>Based on my initial impressions, it makes sense to learn about the new API using Objects and Primitive values to see how things differ, so we’ll be doing exactly that.</p>
+<p>Let’s bootstrap the app and get it running with some HTML, passing in attributes for <code class="highlighter-rouge">someObject</code> and <code class="highlighter-rouge">somePrimitive</code> for the isolate two-way bound Directive, but also let’s keep a reference to the parent values so we can see what changes:</p>
+<figure class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">ng-app=</span><span class="s">"app"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;div</span> <span class="na">ng-controller=</span><span class="s">"ParentController as parent"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;h3&gt;</span>
+      Two way data-binding
+    <span class="nt">&lt;/h3&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"section"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;h4&gt;</span>
+        Parent
+      <span class="nt">&lt;/h4&gt;</span>
+      <span class="nt">&lt;p&gt;</span>
+        Object: {{ parent.someObject }}
+      <span class="nt">&lt;/p&gt;</span>
+      <span class="nt">&lt;p&gt;</span>
+        Primitive: {{ parent.somePrimitive }}
+      <span class="nt">&lt;/p&gt;</span>
+      <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">""</span> <span class="na">ng-click=</span><span class="s">"parent.updateValues();"</span><span class="nt">&gt;</span>
+        Change Parent Values
+      <span class="nt">&lt;/a&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;example</span> <span class="na">obj=</span><span class="s">"parent.someObject"</span> <span class="na">prim=</span><span class="s">"parent.somePrimitive"</span><span class="nt">&gt;&lt;/example&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span></code></pre></figure>
+<p>Live embed:</p>
+<iframe width="100%" height="300" src="//jsfiddle.net/toddmotto/sdxuc80o/embedded/result,js,html" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+<p>With two-way binding, if I change the reference Object and Primitive in the parent and the isolate Component, you’ll see both values continue to update. Now let’s look at one-way flow.</p>
+<h3 id="one-way-bindings">One-way bindings</h3>
+<p>First, the syntax. Instead of <code class="highlighter-rouge">bindings: { obj: '=' }</code>, we’re going to need the new <code class="highlighter-rouge">&lt;</code> notation. Let’s first replace our Component definition Object with that:</p>
+<figure class="highlight"><pre><code class="language-javascript" data-lang="javascript"><span class="kd">var</span> <span class="nx">example</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">bindings</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">obj</span><span class="p">:</span> <span class="s1">'&lt;'</span><span class="p">,</span>
+    <span class="na">prim</span><span class="p">:</span> <span class="s1">'&lt;'</span>
+  <span class="p">},</span>
+  <span class="na">template</span><span class="p">:</span> <span class="err">`</span>
+    <span class="o">&lt;</span><span class="nx">div</span> <span class="kr">class</span><span class="o">=</span><span class="s2">"section"</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">h4</span><span class="o">&gt;</span>
+        <span class="nx">Isolate</span> <span class="nx">Component</span>
+      <span class="o">&lt;</span><span class="sr">/h4</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="na">Object</span><span class="p">:</span> <span class="p">{{</span> <span class="nx">$ctrl</span><span class="p">.</span><span class="nx">obj</span> <span class="p">}}</span><span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="nx">p</span><span class="o">&gt;</span><span class="na">Primitive</span><span class="p">:</span> <span class="p">{{</span> <span class="nx">$ctrl</span><span class="p">.</span><span class="nx">prim</span> <span class="p">}}</span><span class="o">&lt;</span><span class="sr">/p</span><span class="err">&gt;
+</span>      <span class="o">&lt;</span><span class="nx">a</span> <span class="nx">href</span><span class="o">=</span><span class="s2">""</span> <span class="nx">ng</span><span class="o">-</span><span class="nx">click</span><span class="o">=</span><span class="s2">"$ctrl.updateValues();"</span><span class="o">&gt;</span>
+        <span class="nx">Change</span> <span class="nx">Isolate</span> <span class="nx">Values</span>
+      <span class="o">&lt;</span><span class="sr">/a</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/div</span><span class="err">&gt;
+</span>  <span class="err">`</span><span class="p">,</span>
+  <span class="na">controller</span><span class="p">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">updateValues</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">prim</span> <span class="o">=</span> <span class="mi">10</span><span class="p">;</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">obj</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="na">john</span><span class="p">:</span> <span class="p">{</span>
+          <span class="na">age</span><span class="p">:</span> <span class="mi">35</span><span class="p">,</span>
+          <span class="na">location</span><span class="p">:</span> <span class="s1">'Unknown'</span>
+        <span class="p">}</span>
+      <span class="p">};</span>
+    <span class="p">};</span>
+  <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="kd">function</span> <span class="nx">ParentController</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">somePrimitive</span> <span class="o">=</span> <span class="mi">99</span><span class="p">;</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">someObject</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">todd</span><span class="p">:</span> <span class="p">{</span>
+      <span class="na">age</span><span class="p">:</span> <span class="mi">25</span><span class="p">,</span>
+      <span class="na">location</span><span class="p">:</span> <span class="s1">'England, UK'</span>
+    <span class="p">}</span>
+  <span class="p">};</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">updateValues</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">somePrimitive</span> <span class="o">=</span> <span class="mi">33</span><span class="p">;</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">someObject</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="na">jilles</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">age</span><span class="p">:</span> <span class="mi">20</span><span class="p">,</span>
+        <span class="na">location</span><span class="p">:</span> <span class="s1">'Netherlands'</span>
+      <span class="p">}</span>
+    <span class="p">};</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+
+<span class="nx">angular</span>
+  <span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="s1">'app'</span><span class="p">,</span> <span class="p">[])</span>
+  <span class="p">.</span><span class="nx">component</span><span class="p">(</span><span class="s1">'example'</span><span class="p">,</span> <span class="nx">example</span><span class="p">)</span>
+  <span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="s1">'ParentController'</span><span class="p">,</span> <span class="nx">ParentController</span><span class="p">);</span></code></pre></figure>
+<p>Go ahead and touch the live demo. You’ll be able to change the isolate bindings without affecting the <code class="highlighter-rouge">parent</code> scope. However, the <code class="highlighter-rouge">$watch</code> is setup on the <code class="highlighter-rouge">parent</code> data source, so when changes occur, it’ll propagate down and flow into the Component to update it with new data. One-way binding: it’s as easy as that.</p>
+<iframe width="100%" height="300" src="//jsfiddle.net/toddmotto/wauana12/embedded/result,js,html" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+<p>… Or is it?</p>
+<p>There’s a small few things to keep in mind when using one-way bindings (as mentioned in the “First impressions” paragraph).</p>
+<h3 id="caveats">Caveats</h3>
+<p>In one-way binding, Object values are set to the isolate Component using the same value, the parent Object’s identity. When we break this identity (like I did above in the examples), we’re technically “breaking” that identity binding and the parent’s <code class="highlighter-rouge">$watch</code> will not fire. Objects are bound by reference, which means that if we change a property, it’ll still kind-of two-way bind:</p>
+<p>Our isolate property <code class="highlighter-rouge">parent.someObject</code> is isolated as <code class="highlighter-rouge">obj</code>, which means we can access <code class="highlighter-rouge">this.obj.todd.age</code> to get my age. We can also mutate this property by setting a new value. This will force the <code class="highlighter-rouge">parent</code> to also update as Objects are bound by reference and not copied by Angular.</p>
+<p>I’ve omitted the <code class="highlighter-rouge">Primitive</code> properties for this as it’s not what we’re interested in:</p>
+<iframe width="100%" height="300" src="//jsfiddle.net/toddmotto/zenbyrcb/embedded/result,js,html" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+<p>Notice how <code class="highlighter-rouge">age: 25</code> becomes <code class="highlighter-rouge">age: 26</code> in both and back again when you change the parent value.</p>
+</section>
+<div class="share">
+<div class="addthis_sharing_toolbox"></div>
+</div>
+</article>
+<div class="author">
+<div class="author__content">
+<div class="author__pic">
+<img src="/img/todd.jpg" alt="Todd Motto">
+</div>
+<div class="author__bio">
+<p>
+I'm Todd, I teach the world Angular through <a href="https://ultimateangular.com">@UltimateAngular</a>.
+Conference speaker and <a href="//developers.google.com/experts/people/todd-motto">Developer Expert</a> at Google.
+</p>
+<a href="https://twitter.com/toddmotto" class="twitter-follow-button" data-show-count="true"></a>
+</div>
+</div>
+</div>
+<div class="courses courses--bottom">
+<a class="courses__out" href="https://ultimateangular.com/?utm_source=toddmotto.com" target="_blank">
+<img class="courses__logo" src="/img/ua.svg" alt="">
+<h3>
+Award-winning Angular 1.x and Angular 2 courses
+</h3>
+<p>
+Become an expert with my comprehensive Angular 1.5+ and Angular 2 courses
+</p>
+<button type="button">
+View courses
+</button>
+</a>
+</div>
+<div class="signup">
+<div id="mc_embed_signup">
+<form action="//toddmotto.us12.list-manage.com/subscribe/post?u=fb4d73e892f0d123a57dbd8bc&amp;id=0653182c3c" method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank" novalidate>
+<div id="mc_embed_signup_scroll">
+<h3 class="signup__title">Never miss an article</h3>
+<p class="signup__sub">
+All the awesomeness straight to your inbox. <br>
+Plus exclusive discounts coupons for courses or workshop training.
+</p>
+<div class="mc-field-group">
+<input type="email" placeholder="Email address" value="" name="EMAIL" class="required email" id="mce-EMAIL">
+</div>
+<div id="mce-responses" class="clear">
+<div class="response" id="mce-error-response" style="display:none"></div>
+<div class="response" id="mce-success-response" style="display:none"></div>
+</div>
+<div style="position: absolute; left: -5000px;" aria-hidden="true">
+<input type="text" name="b_fb4d73e892f0d123a57dbd8bc_0653182c3c" tabindex="-1" value=""></div>
+<div class="clear">
+<button type="submit" name="subscribe" id="mc-embedded-subscribe">
+Sign up
+<img src="/img/icons/next.svg" alt="">
+</button>
+</div>
+</div>
+</form>
+</div>
+</div>
+<div class="disqus">
+<div id="disqus_thread"></div>
+</div>
+<script src="//s7.addthis.com/js/300/addthis_widget.js#pubid=ra-567a0f80a03a6fbe" async></script>
+<script>
+  var disqus_url = ('http://toddmotto.com/one-way-data-binding-in-angular-1-5/').replace(/\/$/, '');
+  var disqus_title = 'One-way data-binding in Angular 1.5';
+  var disqus_shortname = 'toddmotto';
+  var dsq = document.createElement('script');
+  dsq.async = dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+  document.getElementsByTagName('head')[0].appendChild(dsq);
+</script>
+</div>
+</div>
+<footer class="footer">
+<div class="wrapper">
+<div class="footer__copyright">
+&copy; 2017 - Todd Motto
+</div>
+<div class="footer__links">
+<ul>
+<li>
+<a href="//twitter.com/toddmotto" target="_blank">
+<img src="/img/icons/twitter.svg" alt="Todd Motto on Twitter">
+</a>
+</li>
+<li>
+<a href="//github.com/toddmotto" target="_blank">
+<img src="/img/icons/github.svg" alt="Todd Motto on GitHub">
+</a>
+</li>
+<li>
+<a href="//youtube.com/toddmotto" target="_blank">
+<img src="/img/icons/youtube.svg" alt="Todd Motto on YouTube">
+</a>
+</li>
+<li>
+<a href="//facebook.com/toddmottoblog" target="_blank">
+<img src="/img/icons/fb.svg" alt="Todd Motto on Facebook">
+</a>
+</li>
+<li>
+<a href="/feed.xml" target="_blank">
+<img src="/img/icons/rss.svg" alt="RSS feed for Todd Motto">
+</a>
+</li>
+</ul>
+</div>
+</div>
+</footer>
+<script src="/js/bundle.min.js?1496160711121721403"></script>
+<script>
+(function(A,n,g,u,l,a,r){A.GoogleAnalyticsObject=r;A[l]=A[l]||function(){
+(A[l].q=A[l].q||[]).push(arguments)},A[l].l=1*new Date();a=n.createElement(g),
+r=n.getElementsByTagName(g)[0];a.async=1;a.src=u;r.parentNode.insertBefore(a,r)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-20440416-10', 'toddmotto.com');
+ga('send', 'pageview');
+</script>
+</main>
+</body>
+</html>

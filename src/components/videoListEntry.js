@@ -1,14 +1,11 @@
 angular.module('video-player')
-// .controller('VideoCtrl', function($scope) {
-//   console.log($scope);
-// })
 .component('videoListEntry', {
-  
-  transclude: true,
+  bindings: {
+    video: '<',
+  },
   templateUrl: '../src/templates/videoListEntry.html',
   controller: function() {
-    this.videoListProp = exampleVideoData;
-    // console.log(this.videoListProp);
+    console.log('inside VideoListEntry: ', this);
   }
   
 });
