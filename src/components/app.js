@@ -7,8 +7,11 @@ angular.module('video-player')
     // console.log('inside app, ', exampleVideoData); 
     this.videos = exampleVideoData;
     this.currentvideo = exampleVideoData[0];
-    this.clickListEntry = () => {
-      this.currentvideo = this.video;
+
+    this.clickListEntry = (video) => {
+      console.log('pass', video);
+      this.currentvideo = video;
+      // console.log(this.currentvideo);
     };
   }
 

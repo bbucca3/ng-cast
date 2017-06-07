@@ -7,9 +7,9 @@ angular.module('video-player')
     videos: '<',
     clickEvent: '<',
   },
-  controller: function($scope) {
-    //console.log($scope);
-    console.log('inside videoList, ', $scope);
+  controller: function() {
+    // this.clickEvent =
+    // console.log('inside videoList, ', $scope);
     
   }
 });
